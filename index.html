@@ -1,0 +1,510 @@
+<!doctype html>
+
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Meher Bal Sadan Montessori School Sahanpur — Fee Management</title>
+
+<link rel="manifest" href="?manifest=1">
+
+<meta name="theme-color" content="#123b66">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<style>
+
+*{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#182230}
+
+header{background:#123b66;color:#fff;padding:20px} header h1{margin:0;font-size:25px} header p{margin:6px 0 0}
+
+main{max-width:1180px;margin:18px auto;padding:0 14px} .card{background:#fff;border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 2px 10px #0001}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px} label{font-weight:bold;display:block;margin-bottom:5px}
+
+select,input{width:100%;padding:11px;border:1px solid #cbd4df;border-radius:7px;font-size:15px}
+
+button{border:0;border-radius:7px;padding:11px 16px;background:#123b66;color:#fff;font-weight:bold;cursor:pointer} button.secondary{background:#536273}
+
+.student{background:#eef5fc;padding:15px;border-radius:8px;margin-top:12px} .cycle{padding:12px;border-left:5px solid #123b66;background:#f7f9fb;margin:8px 0}
+
+.success{color:#16723b;font-weight:bold} .warning{color:#9b6200;font-weight:bold} .danger{color:#a51d2d;font-weight:bold}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px} .stat{background:#f7f9fb;padding:14px;border-radius:8px} .stat b{font-size:24px;display:block;margin-top:4px}
+
+table{width:100%;border-collapse:collapse;margin-top:12px} th,td{padding:9px;border-bottom:1px solid #ddd;text-align:left} th{background:#eef2f6}
+
+.small{color:#5c6875;font-size:13px} .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+
+@media(max-width:750px){.grid,.stats{grid-template-columns:1fr}}
+
+</style></head><body>
+
+<header><h1>Meher Bal Sadan Montessori School Sahanpur</h1><p>Fee Management System — Session 2026–27</p><button id="installBtn" class="secondary" style="margin-top:12px" onclick="installApp()">INSTALL APP</button><p id="installHint" class="small" style="color:#fff;display:none">If INSTALL APP is not shown, use Chrome ⋮ → Add to Home screen.</p></header>
+
+<main>
+
+
+
+<div class="card"><h2>Fee Cycle</h2>
+
+<div class="cycle"><b>April–June:</b> 3 monthly fees + Other Charges ₹150 — <span class="success">COMPLETED / ASSUMED PAID</span></div>
+
+<div class="cycle"><b>July–September:</b> 3 monthly fees + Sessional Examination Fee ₹150 — <span class="success">COMPLETED / ASSUMED PAID</span></div>
+
+<div class="cycle"><b>October–December:</b> 3 monthly fees + Half-Yearly Examination Fee ₹150 — <span class="warning">CURRENT CYCLE</span></div>
+
+<div class="cycle"><b>January–March:</b> 3 monthly fees + Annual Examination Fee ₹150 — FUTURE CYCLE</div>
+
+<p class="small">For the current October–December cycle, you can choose how a payment is allocated. The recommended option is First Month + Examination Fee. Custom Selection lets you choose exact months/charges. Any unpaid portion is shown with the exact month/charge name.</p>
+
+</div>
+
+
+
+<div class="card"><h2>1. Find Student</h2><div class="grid">
+
+<div><label>Class</label><select id="cls"><option value="">Select Class</option>
+
+<option>Nursery</option><option>LKG</option><option>UKG</option><option>1st</option><option>2nd A</option><option>2nd B</option><option>3rd</option><option>4th</option><option>5th</option></select></div>
+
+<div><label>R.N.</label><input id="rn" type="number" min="1" placeholder="Enter R.N."></div>
+
+<div><label>&nbsp;</label><button onclick="findStudent()" style="width:100%">FIND STUDENT</button></div>
+
+</div><div id="studentBox"></div></div>
+
+
+
+<div class="card"><h2>2. Submit October–December Fee</h2><div id="paymentCard" style="display:none">
+
+<div class="grid">
+
+<div><label>October Fee</label><input id="octFee" readonly></div>
+
+<div><label>November Fee</label><input id="novFee" readonly></div>
+
+<div><label>December Fee</label><input id="decFee" readonly></div>
+
+</div>
+
+<div class="grid" style="margin-top:12px">
+
+<div><label>Half-Yearly Examination Fee</label><input id="halfExam" value="₹150" readonly></div>
+
+<div><label>Total Cycle Due</label><input id="due" readonly></div>
+
+<div><label>Already Paid in Cycle</label><input id="alreadyPaid" readonly></div>
+
+</div>
+
+<div class="student"><b>REMAINING AFTER PREVIOUS PAYMENTS</b><div id="remainingBox" style="margin-top:8px"></div></div>
+
+<div class="grid" style="margin-top:12px">
+
+<div><label>Amount Received</label><input id="amount" type="number" min="0" placeholder="Enter amount" oninput="renderAllocationChoice()"></div>
+
+<div><label>Payment Mode</label><select id="mode"><option>Cash</option><option>UPI</option><option>Other</option></select></div>
+
+<div><label>Date</label><input id="date" type="date"></div>
+
+</div>
+
+<div class="student" style="margin-top:12px">
+
+<label>Payment Allocation</label>
+
+<select id="allocationMode" onchange="renderAllocationChoice()">
+
+<option value="preferred">First Month + Examination Fee — RECOMMENDED</option>
+
+<option value="monthfirst">Months First (October → November → December → Exam)</option>
+
+<option value="examfirst">Examination Fee First (Exam → October → November → December)</option>
+
+<option value="custom">Custom Selection</option>
+
+</select>
+
+<div id="allocationPreview" style="margin-top:10px"></div>
+
+<div id="customAllocation" style="display:none;margin-top:10px"></div>
+
+</div>
+
+<div class="grid" style="margin-top:12px"><div><label>Remarks</label><input id="remarks" placeholder="Optional"></div></div>
+
+<div class="actions"><button onclick="submitFee()">SUBMIT FEE</button><button class="secondary" onclick="printReceipt()">PRINT 58mm RECEIPT</button></div>
+
+<p id="msg"></p>
+
+</div><p id="noStudent" class="small">Select Class and enter R.N. to begin.</p></div>
+
+
+
+<div class="card"><h2>3. Student Fee History</h2><div id="history"><p class="small">Select a student to see the record.</p></div></div>
+
+
+
+<div class="card">
+<h2 style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0">
+<span>4. October–December Report</span>
+<button class="secondary" id="reportToggle" type="button" onclick="toggleReportPanel()" style="white-space:nowrap">SHOW REPORT</button>
+</h2>
+<div id="reportPanel" style="display:none;margin-top:14px">
+
+<div class="grid"><div><label>Class</label><select id="reportClass" onchange="renderReport()"><option value="">All Classes</option>
+
+<option>Nursery</option><option>LKG</option><option>UKG</option><option>1st</option><option>2nd A</option><option>2nd B</option><option>3rd</option><option>4th</option><option>5th</option></select></div>
+
+<div><label>Status</label><select id="reportStatus" onchange="renderReport()"><option value="all">All</option><option value="paid">Paid</option><option value="partial">Partial</option><option value="unpaid">Not Paid</option></select></div>
+
+<div><label>&nbsp;</label><button onclick="downloadReport()" style="width:100%">DOWNLOAD REPORT</button></div>
+
+<div><label>&nbsp;</label><button class="secondary" id="reportNameToggle" onclick="toggleReportNames()" style="width:100%">SHOW NAMES</button></div></div>
+
+<div class="stats" style="margin-top:14px">
+
+<div class="stat">Total Students<b id="total">0</b></div><div class="stat">Paid<b id="paid">0</b></div><div class="stat">Partial<b id="partial">0</b></div><div class="stat">Not Paid<b id="unpaid">0</b></div>
+
+</div>
+
+<div class="stat" style="margin-top:10px">Collection<b id="collection">₹0</b></div>
+
+<div id="reportTable"></div></div>
+</div>
+
+
+
+<div class="card"><h2>5. Exam Fee Settings</h2>
+
+<div class="grid"><div><label>Sessional Examination Fee</label><input id="sessionExam" type="number" value="150"></div>
+
+<div><label>Half-Yearly Examination Fee</label><input id="halfExamSetting" type="number" value="150"></div>
+
+<div><label>Annual Examination Fee</label><input id="annualExam" type="number" value="150"></div></div>
+
+<button onclick="saveSettings()">SAVE EXAM FEES</button>
+
+<p class="small">The ₹150 exam fee has been set as requested. The source fee sheet separately shows ₹150 as “Other Fee”; this system treats the current ₹150 as the examination charge according to your instruction.</p>
+
+</div>
+
+
+
+<div class="card"><h2>6. Data Management</h2>
+
+<div class="actions"><button class="secondary" onclick="deleteSelectedStudent()">DELETE STUDENT</button><button class="secondary" onclick="deleteSelectedPayment()">DELETE / VOID SELECTED PAYMENT</button></div>
+
+<p class="small">Deletion requires confirmation. Student deletion removes the student and all of that student's payment history. Payment deletion removes only the selected payment.</p>
+
+<div id="dbStatus" class="small">Connecting to Google Sheets database…</div>
+
+</div>
+
+</main>
+
+
+
+<script>
+
+const API_BASE = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+const API={
+  async call(name,args=[]){
+    if(!API_BASE || API_BASE.includes('PASTE_YOUR')) throw new Error('Backend URL is not configured yet.');
+    const res=await fetch(API_BASE+'?api='+encodeURIComponent(name)+'&payload='+encodeURIComponent(JSON.stringify(args)),{cache:'no-store'});
+    if(!res.ok) throw new Error('Server error '+res.status);
+    const data=await res.json();
+    if(data.error) throw new Error(data.error);
+    return data;
+  }
+};
+
+let students=[],payments=[],settings={session:150,half:150,annual:150},current=null,lastReceipt=null,selectedPaymentId=null;
+
+let reportNamesVisible=false;
+
+let deferredInstallPrompt=null;
+
+const $=id=>document.getElementById(id);
+
+// LOCAL OFFLINE CACHE — Step 2
+const LOCAL_DB='MeherBalSadanFeeDB';
+const LOCAL_DB_VERSION=2;
+function openLocalDB(){return new Promise((resolve,reject)=>{const r=indexedDB.open(LOCAL_DB,LOCAL_DB_VERSION);r.onupgradeneeded=()=>{const db=r.result;if(!db.objectStoreNames.contains('appData'))db.createObjectStore('appData',{keyPath:'key'});if(!db.objectStoreNames.contains('pendingPayments'))db.createObjectStore('pendingPayments',{keyPath:'id'});};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
+async function saveLocalData(data){try{const db=await openLocalDB();await new Promise((resolve,reject)=>{const tx=db.transaction('appData','readwrite');tx.objectStore('appData').put({key:'current',students:data.students||[],payments:data.payments||[],settings:data.settings||{}});tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});db.close();}catch(e){console.warn('Local cache save failed',e);}}
+async function loadLocalData(){try{const db=await openLocalDB();const data=await new Promise((resolve,reject)=>{const tx=db.transaction('appData','readonly');const r=tx.objectStore('appData').get('current');r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>reject(r.error);});db.close();return data;}catch(e){console.warn('Local cache read failed',e);return null;}}
+async function savePendingPayment(p){const db=await openLocalDB();await new Promise((resolve,reject)=>{const tx=db.transaction('pendingPayments','readwrite');tx.objectStore('pendingPayments').put(p);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});db.close();}
+async function loadPendingPayments(){const db=await openLocalDB();const out=await new Promise((resolve,reject)=>{const tx=db.transaction('pendingPayments','readonly');const r=tx.objectStore('pendingPayments').getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error);});db.close();return out;}
+async function deletePendingPayment(id){const db=await openLocalDB();await new Promise((resolve,reject)=>{const tx=db.transaction('pendingPayments','readwrite');tx.objectStore('pendingPayments').delete(id);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});db.close();}
+function setConnectionStatus(text,cls){if($('dbStatus'))$('dbStatus').innerHTML='<span class="'+(cls||'small')+'">'+esc(text)+'</span>';}
+
+
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+
+function todayLocal(){const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}
+
+$('date').value=todayLocal();
+
+async function boot(){
+ try{
+  const d=await API.call('getData');
+  students=d.students||[];payments=d.payments||[];settings=d.settings||settings;
+  const pending=await loadPendingPayments();
+  const serverIds=new Set(payments.map(x=>String(x.id)));
+  payments=payments.concat(pending.filter(x=>!serverIds.has(String(x.id))));
+  syncSettings();
+  await saveLocalData({students:students,payments:payments,settings:settings});
+  setConnectionStatus('✓ Connected to Google Sheets • Local offline copy updated','success');
+  renderReport();
+  syncPendingPayments();
+ }catch(e){
+  const local=await loadLocalData();
+  if(local){students=local.students||[];payments=local.payments||[];settings=local.settings||settings;syncSettings();setConnectionStatus('✓ Offline mode • Using saved local student data','warning');renderReport();}
+  else setConnectionStatus('Database connection failed and no local copy is available yet.','danger');
+ }
+}
+
+function syncSettings(){ if($('sessionExam')) $('sessionExam').value=settings.session; if($('halfExamSetting')) $('halfExamSetting').value=settings.half; if($('annualExam')) $('annualExam').value=settings.annual; }
+
+async function saveSettings(){
+
+ settings={session:Number($('sessionExam').value)||150,half:Number($('halfExamSetting').value)||150,annual:Number($('annualExam').value)||150};
+
+ try{await API.call('saveSettings',[settings]);if(current) updateDue();renderReport();alert('Exam fees saved to Google Sheets.');}catch(e){alert('Could not save settings: '+(e.message||e));}
+
+}
+
+function cycleItems(){return [
+
+ {key:'oct',label:'October',amount:current.fee},
+
+ {key:'nov',label:'November',amount:current.fee},
+
+ {key:'dec',label:'December',amount:current.fee},
+
+ {key:'half',label:'Half-Yearly Examination Fee',amount:settings.half}
+
+]}
+
+function cycleDue(){return current.fee*3+settings.half}
+
+function parseAllocation(p){if(!p||!p.allocation)return null;try{const x=JSON.parse(p.allocation);return x&&typeof x==='object'?x:null}catch(e){return null}}
+
+function paidByItem(){
+
+ const items=cycleItems(), paid={}; items.forEach(i=>paid[i.key]=0);
+
+ const list=payments.filter(p=>p.class===current.class&&String(p.rn)===String(current.rn)&&p.cycle==='Oct-Dec 2026'&&!p.voided).slice().sort((a,b)=>String(a.timestamp).localeCompare(String(b.timestamp)));
+
+ for(const p of list){
+
+   const a=parseAllocation(p);
+
+   if(a){ items.forEach(i=>{paid[i.key]+=Math.max(0,Number(a[i.key]||0));}); continue; }
+
+   // Backward-compatible FIFO allocation for older payments that predate allocation tracking.
+
+   let rem=Number(p.amount)||0;
+
+   for(const i of items){const left=Math.max(0,i.amount-paid[i.key]);const take=Math.min(rem,left);paid[i.key]+=take;rem-=take;if(rem<=0)break;}
+
+ }
+
+ return paid;
+
+}
+
+function remainingParts(){const paid=paidByItem();return cycleItems().map(i=>({key:i.key,label:i.label,amount:Math.max(0,i.amount-paid[i.key])})).filter(x=>x.amount>0)}
+
+function remainingText(){const parts=remainingParts();if(!parts.length)return '<span class="success">✓ CURRENT CYCLE FULLY PAID</span>';return parts.map(x=>`<div><b>${esc(x.label)}:</b> ₹${x.amount.toLocaleString('en-IN')}</div>`).join('')}
+
+function allocationOrder(mode){
+
+ if(mode==='monthfirst') return ['oct','nov','dec','half'];
+
+ if(mode==='examfirst') return ['half','oct','nov','dec'];
+
+ return ['oct','half','nov','dec'];
+
+}
+
+function autoAllocation(amount,mode){
+
+ const paid=paidByItem(), by={}; cycleItems().forEach(i=>by[i.key]=0); let rem=Number(amount)||0;
+
+ const map=Object.fromEntries(cycleItems().map(i=>[i.key,i]));
+
+ for(const key of allocationOrder(mode)){if(rem<=0)break;const left=Math.max(0,map[key].amount-paid[key]);const take=Math.min(rem,left);by[key]=take;rem-=take;}
+
+ return by;
+
+}
+
+function allocationTotal(a){return Object.values(a||{}).reduce((x,v)=>x+Number(v||0),0)}
+
+function renderAllocationChoice(){
+
+ if(!current)return; const mode=$('allocationMode').value, amount=Number($('amount').value)||0, box=$('allocationPreview'), custom=$('customAllocation');
+
+ if(mode==='custom'){
+
+   custom.style.display='block';
+
+   const paid=paidByItem();
+
+   custom.innerHTML=cycleItems().map(i=>{const left=Math.max(0,i.amount-paid[i.key]);return `<div style="display:grid;grid-template-columns:1fr 140px;gap:10px;align-items:center;margin:6px 0"><span><b>${esc(i.label)}</b><br><span class="small">Remaining: ₹${left.toLocaleString('en-IN')}</span></span><input class="customPart" data-key="${i.key}" type="number" min="0" max="${left}" step="1" value="0" oninput="updateCustomTotal()"></div>`}).join('');
+
+   box.innerHTML='<span class="small">Enter exactly how much of this payment should be applied to each month/charge.</span>'; updateCustomTotal(); return;
+
+ }
+
+ custom.style.display='none';
+
+ const a=autoAllocation(amount,mode), total=allocationTotal(a);
+
+ box.innerHTML=amount?`<b>Will be allocated:</b> ${cycleItems().filter(i=>a[i.key]>0).map(i=>`${esc(i.label)} ₹${a[i.key].toLocaleString('en-IN')}`).join(' + ') || '₹0'}${total<amount?`<div class="warning" style="margin-top:5px">₹${(amount-total).toLocaleString('en-IN')} cannot be allocated because the selected remaining charges are already paid.</div>`:''}`:'<span class="small">Enter the amount received to preview the allocation.</span>';
+
+}
+
+function updateCustomTotal(){
+
+ const amount=Number($('amount').value)||0; const vals={};document.querySelectorAll('.customPart').forEach(x=>vals[x.dataset.key]=Number(x.value)||0);
+
+ const total=allocationTotal(vals), remaining=remainingParts().reduce((a,x)=>a+x.amount,0);
+
+ $('allocationPreview').innerHTML=`<b>Custom allocation:</b> ₹${total.toLocaleString('en-IN')} selected of ₹${amount.toLocaleString('en-IN')} received.${total===amount&&amount<=remaining?'<span class="success"> ✓ READY</span>':'<span class="warning"> Please make the selected total exactly equal to the amount received and not exceed the remaining balance.</span>'}`;
+
+}
+
+function getSubmissionAllocation(amount){
+
+ const mode=$('allocationMode').value;
+
+ if(mode!=='custom') return autoAllocation(amount,mode);
+
+ const a={};document.querySelectorAll('.customPart').forEach(x=>a[x.dataset.key]=Number(x.value)||0);return a;
+
+}
+
+function findStudent(){const cls=$('cls').value,rn=$('rn').value.trim();if(!cls||!rn){$('studentBox').innerHTML='<p class="warning">Please select Class and enter R.N.</p>';return;}current=students.find(s=>s.class===cls&&String(s.rn)===rn);selectedPaymentId=null;if(!current){$('studentBox').innerHTML='<p class="warning">No student found for this Class + R.N.</p>';$('paymentCard').style.display='none';return;}$('studentBox').innerHTML=`<div class="student"><b>Student Name:</b> ${esc(current.name)||'NAME NOT ENTERED'}<br><b>Class:</b> ${esc(current.class)} &nbsp; <b>R.N.:</b> ${esc(current.rn)}<br><b>Monthly Fee:</b> ₹${current.fee}</div>`;$('paymentCard').style.display='block';$('noStudent').style.display='none';$('amount').value='';$('allocationMode').value='preferred';updateDue();renderAllocationChoice();renderHistory();}
+
+function cyclePaid(){return cycleItems().reduce((a,i)=>a+(paidByItem()[i.key]||0),0)}
+
+function updateDue(){$('octFee').value='₹'+current.fee;$('novFee').value='₹'+current.fee;$('decFee').value='₹'+current.fee;$('halfExam').value='₹'+settings.half;$('due').value='₹'+cycleDue();$('alreadyPaid').value='₹'+cyclePaid();$('remainingBox').innerHTML=remainingText();renderAllocationChoice();}
+
+async function submitFee(){
+
+ if(!current)return;
+
+ const amount=Number($('amount').value),remaining=remainingParts().reduce((a,x)=>a+x.amount,0);
+
+ if(amount<=0){$('msg').innerHTML='<span class="warning">Enter the amount received.</span>';return;}
+
+ if(amount>remaining){$('msg').innerHTML=`<span class="warning">Maximum remaining amount is ₹${remaining.toLocaleString('en-IN')}.</span>`;return;}
+
+ const allocation=getSubmissionAllocation(amount),allocated=allocationTotal(allocation);
+
+ if(allocated!==amount){$('msg').innerHTML=`<span class="warning">Payment allocation must equal exactly ₹${amount.toLocaleString('en-IN')}.</span>`;return;}
+
+ const paid=paidByItem();
+
+ for(const i of cycleItems()){const x=Number(allocation[i.key]||0);if(x<0||x>Math.max(0,i.amount-paid[i.key])){$('msg').innerHTML=`<span class="warning">Allocation for ${esc(i.label)} exceeds its remaining balance.</span>`;return;}}
+
+ const clientId=(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2)); const p={clientId:clientId,date:$('date').value,cycle:'Oct-Dec 2026',amount,mode:$('mode').value,class:current.class,rn:current.rn,name:current.name,expected:cycleDue(),remainingBefore:remaining,remarks:$('remarks').value,allocation:JSON.stringify(allocation)};  try{
+   if(navigator.onLine){
+     const saved=await API.call('addPayment',[p]);payments=saved.payments;lastReceipt=saved.payment; await deletePendingPayment(clientId);
+     await saveLocalData({students:students,payments:payments,settings:settings});
+     $('msg').innerHTML=`<span class="success">✓ Fee submitted — Receipt ${esc(lastReceipt.receipt)} — Paid ₹${amount.toLocaleString('en-IN')} — Remaining ₹${(remaining-amount).toLocaleString('en-IN')}</span>`;
+   }else{
+     const localId=clientId;
+     const receipt='MBSS-OFF-'+Date.now();
+     const localPayment={...p,id:localId,receipt,timestamp:new Date().toISOString(),voided:false,localOnly:true};
+     await savePendingPayment(localPayment);
+     payments.push(localPayment);
+     lastReceipt=localPayment;
+     await saveLocalData({students:students,payments:payments,settings:settings});
+     $('msg').innerHTML=`<span class="success">✓ Saved OFFLINE — Receipt ${esc(receipt)} — Paid ₹${amount.toLocaleString('en-IN')} — Pending sync when internet returns.</span>`;
+   }
+   $('amount').value='';$('remarks').value='';updateDue();renderHistory();renderReport();
+ }catch(e){$('msg').innerHTML='<span class="danger">Could not save payment: '+esc(e.message||e)+'</span>';}
+
+}
+
+function renderHistory(){const h=payments.filter(p=>p.class===current.class&&String(p.rn)===String(current.rn)&&!p.voided).sort((a,b)=>String(b.timestamp).localeCompare(String(a.timestamp)));const assumed='<div class="cycle"><b>April–June 2026:</b> COMPLETED / ASSUMED PAID</div><div class="cycle"><b>July–September 2026:</b> COMPLETED / ASSUMED PAID</div>';if(!h.length){$('history').innerHTML=assumed+'<p>No actual payment transaction has been submitted in this system yet.</p>';return;}const last=h[0];$('history').innerHTML=assumed+`<div class="student"><b>Last Actual Fee Submitted:</b> ${esc(last.date)}<br><b>Last Amount:</b> ₹${Number(last.amount).toLocaleString('en-IN')}<br><b>Payment Mode:</b> ${esc(last.mode)}<br><b>Receipt:</b> ${esc(last.receipt)}<br><b>Current Cycle Remaining:</b> ${remainingParts().reduce((a,x)=>a+x.amount,0).toLocaleString('en-IN')}</div><table><tr><th>Date</th><th>Cycle</th><th>Paid</th><th>Mode</th><th>Receipt</th><th>Remaining After Payment</th><th>Action</th></tr>${h.map(p=>`<tr><td>${esc(p.date)}</td><td>${esc(p.cycle)}</td><td>₹${Number(p.amount).toLocaleString('en-IN')}</td><td>${esc(p.mode)}</td><td>${esc(p.receipt)}</td><td>₹${Math.max(0,Number(p.remainingBefore)-Number(p.amount)).toLocaleString('en-IN')}</td><td><button class="secondary" onclick="selectPayment('${esc(p.id)}')">SELECT</button></td></tr>`).join('')}</table>`;}
+
+function selectPayment(id){selectedPaymentId=id;alert('Payment selected. Now click DELETE / VOID SELECTED PAYMENT.');}
+
+function allocationPaidForStudent(s){
+
+ const items=[{key:'oct',label:'October',amount:s.fee},{key:'nov',label:'November',amount:s.fee},{key:'dec',label:'December',amount:s.fee},{key:'half',label:'Half-Yearly Exam Fee',amount:settings.half}],paid={};items.forEach(i=>paid[i.key]=0);
+
+ const list=payments.filter(p=>p.class===s.class&&String(p.rn)===String(s.rn)&&p.cycle==='Oct-Dec 2026'&&!p.voided).slice().sort((a,b)=>String(a.timestamp).localeCompare(String(b.timestamp)));
+
+ for(const p of list){const a=parseAllocation(p);if(a){items.forEach(i=>paid[i.key]+=Number(a[i.key]||0));}else{let rem=Number(p.amount)||0;for(const i of items){const left=Math.max(0,i.amount-paid[i.key]);const take=Math.min(rem,left);paid[i.key]+=take;rem-=take;if(rem<=0)break;}}}
+
+ return {items,paid};
+
+}
+
+function statusFor(s){const x=allocationPaidForStudent(s),paid=Object.values(x.paid).reduce((a,v)=>a+v,0),due=s.fee*3+settings.half,rem=Math.max(0,due-paid);return {paid,rem,status:rem===0?'paid':paid>0?'partial':'unpaid'}}
+
+function remainingFor(s){const x=allocationPaidForStudent(s);const parts=x.items.filter(i=>Math.max(0,i.amount-x.paid[i.key])>0).map(i=>i.label+' ₹'+Math.max(0,i.amount-x.paid[i.key]));return parts.length?parts.join(' + '):'FULLY PAID'}
+
+function toggleReportPanel(){
+ const panel=$('reportPanel'),btn=$('reportToggle');
+ const open=panel.style.display!=='none';
+ panel.style.display=open?'none':'block';
+ btn.innerText=open?'SHOW REPORT':'HIDE REPORT';
+ if(!open) renderReport();
+}
+function toggleReportNames(){reportNamesVisible=!reportNamesVisible;$('reportNameToggle').innerText=reportNamesVisible?'HIDE NAMES':'SHOW NAMES';renderReport();}
+
+function renderReport(){const cls=$('reportClass').value,filter=$('reportStatus').value,pool=students.filter(s=>!cls||s.class===cls),rows=pool.map(s=>({s,...statusFor(s)})).filter(x=>filter==='all'||x.status===filter),paid=pool.filter(s=>statusFor(s).status==='paid').length,partial=pool.filter(s=>statusFor(s).status==='partial').length,unpaid=pool.filter(s=>statusFor(s).status==='unpaid').length,col=payments.filter(p=>p.cycle==='Oct-Dec 2026'&&!p.voided&&(!cls||p.class===cls)).reduce((a,p)=>a+Number(p.amount),0);$('total').innerText=pool.length;$('paid').innerText=paid;$('partial').innerText=partial;$('unpaid').innerText=unpaid;$('collection').innerText='₹'+col.toLocaleString('en-IN');$('reportTable').innerHTML=`<table><tr><th>S.N.</th><th>R.N.</th><th>Student Name</th><th>Class</th><th>Paid</th><th>Remaining</th><th>Remaining Months / Charge</th><th>Status</th></tr>${rows.map(x=>`<tr><td>${x.s.sn}</td><td>${x.s.rn}</td><td>${reportNamesVisible?(esc(x.s.name)||'NAME NOT ENTERED'):'HIDDEN'}</td><td>${esc(x.s.class)}</td><td>₹${x.paid.toLocaleString('en-IN')}</td><td>₹${x.rem.toLocaleString('en-IN')}</td><td>${esc(remainingFor(x.s))}</td><td>${x.status.toUpperCase()}</td></tr>`).join('')}</table>`}
+
+function downloadReport(){const cls=$('reportClass').value,filter=$('reportStatus').value,pool=students.filter(s=>!cls||s.class===cls),rows=pool.map(s=>({s,...statusFor(s)})).filter(x=>filter==='all'||x.status===filter),csv='S.N.,R.N.,Student Name,Class,Paid,Remaining,Remaining Months / Charge,Status\n'+rows.map(x=>[x.s.sn,x.s.rn,x.s.name,x.s.class,x.paid,x.rem,remainingFor(x.s),x.status].map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='Fee_Report_Oct-Dec_2026.csv';a.click();}
+
+function printReceipt(){if(!lastReceipt){alert('Submit a fee first.');return;}const p=lastReceipt,rem=remainingParts(),remText=rem.length?rem.map(x=>x.label+': ₹'+x.amount.toLocaleString('en-IN')).join('<br>'):'FULLY PAID',alloc=parseAllocation(p)||{},allocText=cycleItems().filter(i=>Number(alloc[i.key]||0)>0).map(i=>i.label+': ₹'+Number(alloc[i.key]).toLocaleString('en-IN')).join('<br>')||('Amount Received: ₹'+Number(p.amount).toLocaleString('en-IN')),w=window.open('','_blank','width=420,height=700'),receipt=`<div class="receipt"><div class="rhead">MEHER BAL SADAN MONTESSORI SCHOOL SAHANPUR</div><div class="rtitle">FEE RECEIPT</div><div class="line"><b>Receipt No.:</b> ${esc(p.receipt)}</div><div class="line"><b>Date:</b> ${esc(p.date)}</div><div class="line"><b>Student:</b> ${esc(p.name)||'NAME NOT ENTERED'}</div><div class="line"><b>Class:</b> ${esc(p.class)} &nbsp;&nbsp; <b>R.N.:</b> ${esc(p.rn)}</div><div class="line"><b>Cycle:</b> October–December 2026</div><table><tr><th>Particular</th><th>Amount</th></tr><tr><td>Cycle Total Due</td><td>₹${Number(p.expected).toLocaleString('en-IN')}</td></tr><tr><td>Amount Received</td><td>₹${Number(p.amount).toLocaleString('en-IN')}</td></tr></table><div class="paid"><b>Payment Mode:</b> ${esc(p.mode)}</div><div class="remain"><b>Payment Allocated:</b><br>${allocText}</div><div class="remain"><b>Remaining:</b><br>${remText}</div><div class="rfoot">Thank you.</div></div>`;w.document.write(`<html><head><title>Fee Receipt ${esc(p.receipt)}</title><style>@page{size:58mm auto;margin:0}html,body{margin:0;padding:0;width:58mm;background:#fff;font-family:Arial,sans-serif}.receipt{width:58mm;box-sizing:border-box;padding:3mm 3mm 4mm 3mm}.rhead{font-size:9px;line-height:1.2;font-weight:bold;text-align:center}.rtitle{text-align:center;font-size:10px;font-weight:bold;margin:3mm 0 2mm}.line{font-size:8px;line-height:1.35;margin:1mm 0;word-wrap:break-word}table{width:100%;border-collapse:collapse;margin-top:1.5mm;font-size:7.5px}th,td{border:1px solid #555;padding:1mm;text-align:left;vertical-align:top}th:last-child,td:last-child{text-align:right}.paid{font-size:8px;margin-top:2mm}.remain{font-size:8px;line-height:1.35;margin-top:2mm}.rfoot{text-align:center;font-size:8px;margin-top:3mm;border-top:1px dashed #777;padding-top:2mm}</style></head><body>${receipt}<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('Service worker registration failed',err)));
+}
+</script></body></html>`);w.document.close();setTimeout(()=>w.print(),300);}
+
+async function deleteSelectedPayment(){if(!selectedPaymentId){alert('First select a payment from Student Fee History.');return;}if(!confirm('Delete/void this payment? This will reduce the student\'s paid amount.'))return;try{const d=await API.call('voidPayment',[selectedPaymentId]);payments=d.payments;selectedPaymentId=null;updateDue();renderHistory();renderReport();alert('Payment deleted/voided successfully.');}catch(e){alert('Could not delete payment: '+(e.message||e));}}
+
+async function deleteSelectedStudent(){if(!current){alert('First find the student you want to delete.');return;}const label=`${current.class} / R.N. ${current.rn} / ${current.name}`;if(!confirm('PERMANENTLY DELETE this student and ALL payment history for '+label+'?'))return;try{const d=await API.call('deleteStudent',[current.class,current.rn]);students=d.students;payments=d.payments;current=null;selectedPaymentId=null;$('studentBox').innerHTML='<p class="success">Student deleted successfully.</p>';$('paymentCard').style.display='none';$('history').innerHTML='<p class="small">Select a student to see the record.</p>';renderReport();}catch(e){alert('Could not delete student: '+(e.message||e));}}
+
+async function syncPendingPayments(){
+ try{
+  if(!navigator.onLine){setConnectionStatus('Offline • pending payments remain safely on this device','warning');return;}
+  const pending=await loadPendingPayments();
+  if(!pending.length){return;}
+  let synced=0;
+  for(const item of pending){
+   const saved=await API.call('addPayment',[item]);
+   payments=saved.payments||payments;
+   await deletePendingPayment(item.id);
+   synced++;
+  }
+  await saveLocalData({students:students,payments:payments,settings:settings});
+  setConnectionStatus('✓ Internet restored • '+synced+' offline payment(s) synced to Google Sheets','success');
+  if(current){updateDue();renderHistory();}
+  renderReport();
+ }catch(e){setConnectionStatus('Internet available • pending payment sync will retry: '+(e.message||e),'warning');}
+}
+window.addEventListener('online',()=>{syncPendingPayments();});
+
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;$('installBtn').style.display='inline-block';});
+
+async function installApp(){if(!deferredInstallPrompt){$('installHint').style.display='block';alert('To install: Chrome ⋮ → Add to Home screen (or Install app).');return;}deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;$('installBtn').style.display='none';}
+
+window.addEventListener('appinstalled',()=>{$('installBtn').style.display='none';$('installHint').style.display='none';});
+window.addEventListener('offline',()=>setConnectionStatus('⚠ Internet unavailable • Offline fee entry is available','warning'));
+window.addEventListener('online',()=>setConnectionStatus('✓ Internet restored • Pending offline payments are saved locally for the next sync step','success'));
+
+boot();
+
+
+
+</script></body></html>
